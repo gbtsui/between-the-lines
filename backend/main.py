@@ -21,6 +21,11 @@ CORS(app)
 def analyze():
     return analyzeText(request.json["text"])
 
+def ping():
+    return jsonify({
+        "result":"pong"
+    })
+
 def analyzeText(text):
     doc = nlp(text)
     words = []
@@ -29,7 +34,7 @@ def analyzeText(text):
         words.append({
             "text": token.text,
             "lemma": token.lemma_,
-            "position": token.pos_,
+            "pos": token.pos_,
             "tag": token.tag_,
             "dep": token.dep_,
             "morph": str(token.morph),
