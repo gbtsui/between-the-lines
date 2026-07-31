@@ -1,10 +1,51 @@
 import spacy
 import sys
 import json 
-import flask
+from flask import Flask
+from flask_cors import CORS
 
 nlp = spacy.load("la_core_web_lg")
-doc = nlp("haec narrantur a poetis de perseo")
 
-for word in doc:
-    print(f'{word.text}, {word.norm_}, {word.lemma_}, {word.pos_}')
+
+#doc = nlp("haec narrantur a poetis de perseo")
+
+#for token in doc:
+#    print(token.text, token.lemma_, token.pos_, token.tag_, token.dep_,
+#            token.shape_, token.is_alpha, token.is_stop)
+
+app = Flask(__name__)
+CORS(app)
+
+@app.route('/analyze', methods=['POST'])
+
+def analyze():
+    return analyzeText(request.json["text"])
+
+def analyzeText(text):
+    doc = nlp(text)
+    words = []
+
+    for token in doc:
+        words.append({
+            "text": token.text,
+            "lemma": token.lemma_,
+            "position": token.pos_,
+            "tag": token.tag_,
+            "dep": token.dep_,
+            "morph": str(token.morph),
+            "shape": token.shape_,
+            "head": token.head.i,  # index of parent word
+            "definition": get_definition(token.lemma_)
+        })
+    
+    return jsonify({
+        "words": words,
+        "sentence": text
+    })
+
+def get_definition(lemma):
+    #add dictionary lookup later astaghfirullah
+    return None
+
+if __name__ == '__main__':
+    app.run(debug=True, port=6767)
