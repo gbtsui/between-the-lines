@@ -1,6 +1,5 @@
-// @ts-ignore
-
 import {env} from "$env/dynamic/private";
+import {SILLYMAXXED_INTERNAL_SERVER_SECRET} from "$env/static/private";
 
 export const POST = async ({request, params}) => {
     const apiUrl = env.FLASK_API_URL || "http://localhost:6767"
@@ -15,6 +14,7 @@ export const POST = async ({request, params}) => {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
+            "Secret": SILLYMAXXED_INTERNAL_SERVER_SECRET
         },
         body: JSON.stringify(requestBody)
     })
@@ -28,7 +28,7 @@ export const POST = async ({request, params}) => {
     })
 }
 
-export const OPTIONS = ({ params }) => {
+export const OPTIONS = () => {
 
     return new Response(null, {
         headers: {

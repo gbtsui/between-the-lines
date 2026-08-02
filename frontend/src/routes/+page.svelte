@@ -43,9 +43,12 @@
         })*/
                 .then(res => res.json())
                 .then(data => {
-                    if (data.type === "failure") {
+                    if (data.type === "failure" || data.error) {
+                        console.error("error!",JSON.stringify(data));
                         error = data.error || "request failed :("
                     } else {
+                        console.log(JSON.stringify(data));
+                        error = ""
                         testWordData = data.words[0]
                     }
                 })

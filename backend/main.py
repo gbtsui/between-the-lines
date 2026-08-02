@@ -1,8 +1,12 @@
 import spacy
 import sys
-import json 
+import json
+import os
 from flask import Flask, jsonify, request
 from flask_cors import CORS
+import hmac
+from dotenv import load_dotenv
+
 
 nlp = spacy.load("la_core_web_lg")
 
@@ -16,12 +20,31 @@ nlp = spacy.load("la_core_web_lg")
 app = Flask(__name__)
 CORS(app)
 
+
+def verify_secret(incoming_secret: str) -> bool:
+    expected_secret = os.getenv("SILLYMAXXED_INTERNAL_SERVER_SECRET")
+
+    if not expected_secret:
+        raise ValueError("CLIENT_SECRET environment variable is missing!")
+    return hmac.compare_digest(incoming_secret, expected_secret)
+
+
 @app.route('/testWord', methods=['POST'])
 
 def testWord():
     #print("testWord called")
     #text = request.json["text"]
     #print("text:", text)
+
+    silly_secret: str = request.headers.get("Secret")
+    print("silly_secret: ", silly_secret)
+    if not silly_secret:
+        return jsonify({"error": "Unauthorized, No Secret"}), 401
+
+
+    verified = verify_secret(silly_secret)
+    if not verified:
+        return jsonify({"error": "Unauthorized"}), 401
 
     if not request.is_json:
             print("Request is not JSON!")
