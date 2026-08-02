@@ -1,7 +1,7 @@
 import spacy
 import sys
 import json 
-from flask import Flask
+from flask import Flask, jsonify
 from flask_cors import CORS
 
 nlp = spacy.load("la_core_web_lg")
@@ -42,7 +42,9 @@ def analyzeText(text):
             "head": token.head.i,  # index of parent word
             "definition": get_definition(token.lemma_)
         })
-    
+
+    print(words)
+
     return jsonify({
         "words": words,
         "sentence": text
@@ -54,3 +56,4 @@ def get_definition(lemma):
 
 if __name__ == '__main__':
     app.run(debug=True, port=6767)
+    print(analyzeText("inter lineas"))
