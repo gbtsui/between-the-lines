@@ -27,8 +27,12 @@
     const sendTestWord = async () => {
         /*const response =*/
         try {
+            console.log(`Now sending testword ${testWord}`);
             await fetch("/api/testWord", {
                 method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
                 body: JSON.stringify({
                     text: testWord,
                 })
@@ -42,7 +46,7 @@
                     if (data.type === "failure") {
                         error = data.error || "request failed :("
                     } else {
-                        testWordData = JSON.parse(data.words)[0]
+                        testWordData = data.words[0]
                     }
                 })
             //i actually like this pattern a lot, it's very clean. i should use it more often

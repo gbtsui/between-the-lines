@@ -1,7 +1,7 @@
 import spacy
 import sys
 import json 
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 
 nlp = spacy.load("la_core_web_lg")
@@ -16,10 +16,27 @@ nlp = spacy.load("la_core_web_lg")
 app = Flask(__name__)
 CORS(app)
 
-@app.route('/analyze', methods=['POST'])
+@app.route('/testWord', methods=['POST'])
 
-def analyze():
-    return analyzeText(request.json["text"])
+def testWord():
+    #print("testWord called")
+    #text = request.json["text"]
+    #print("text:", text)
+
+    if not request.is_json:
+            print("Request is not JSON!")
+            return jsonify({"error": "Request must be JSON"}), 400
+
+    data = request.get_json()
+    #print("parsed data: ", data)
+
+    if "text" not in data:
+        print("No 'text' field in request!")
+        return jsonify({"error": "Missing 'text' field"}), 400
+
+    text = data["text"]
+    #print("text: ", text)
+    return analyzeText(text)
 
 def ping():
     return jsonify({
@@ -27,6 +44,7 @@ def ping():
     })
 
 def analyzeText(text):
+    print("running AnalyzeText")
     doc = nlp(text)
     words = []
 
@@ -43,7 +61,7 @@ def analyzeText(text):
             "definition": get_definition(token.lemma_)
         })
 
-    print(words)
+    #print(words)
 
     return jsonify({
         "words": words,
@@ -56,4 +74,4 @@ def get_definition(lemma):
 
 if __name__ == '__main__':
     app.run(debug=True, port=6767)
-    print(analyzeText("inter lineas"))
+    # print(analyzeText("inter lineas"))
