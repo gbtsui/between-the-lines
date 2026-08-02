@@ -40,6 +40,7 @@ function parseMorph(morph: string): Record<string, string> {
 
 export const formatMorphology =
 ({morph, pos}: { morph: string, pos: string }) => {
+    //console.log({morph, pos})
     if (!morph) {
         if (pos === "ADP") return "+?"
         return ""
@@ -74,5 +75,7 @@ export const formatMorphology =
             parts.push(`${k}=${v}`);
         }
     }
+
+    return parts.join(".") || morph
 }
 
