@@ -1,11 +1,18 @@
 <script lang="ts">
+    import type {WordData} from "$lib/types";
+
     type MODE = "editing" | "reading"
     type LOADSTATE = null | "sending_request" | "decoding"
     let mode = $state<MODE>("editing")
     let rawInput = $state<string>("")
     let loading = $state<boolean>(false)
     let currentLoadState = $state<LOADSTATE>(null)
+    let error = $state<null | string>(null)
     let helpOpen = $state<boolean>(false)
+
+    let selectedWordIndex = $state<null | string>(null) //idk if there's a more robust way to do ts
+    let wordslop = $state<WordData[]>([])
+
     const loremIpsum = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
         "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. " +
         "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris " +
@@ -35,9 +42,21 @@
             res => res.json()
         ).then(
             data => {
-                //boiiiiiii ts boutta be so tuff
+                if (data.type === "failure" || data.error) {
+                    console.error("error!", JSON.stringify(data));
+                    error = data.error || "request failed :("
+                } else {
+                    console.log(JSON.stringify(data));
+                    wordslop = data.words
+                }
             }
-        )
+        ).catch(err => {
+            error = err
+            loading = false
+        }).finally(() => {
+            loading = false
+
+        })
     }
 </script>
 
@@ -132,17 +151,24 @@
                     Help
                 </div>
                 <div class="text-md text-stone-300 flex flex-col gap-[1rem]">
-                    <div>Art thou stricken by confusion and perplexity at the complexity of this fusional bewildering display of Lorem and Ipsum?</div>
+                    <div>Art thou stricken by confusion and perplexity at the complexity of this fusional bewildering
+                        display of Lorem and Ipsum?
+                    </div>
                     <div>Well, look no further, my dear friend!</div>
                     <div>Perchance, the editing tab is quite simple.</div>
-                    <div>I believe it was myself who said, and I quote, "Typeth thy Latin into yonder textbox, whereupon the sacred Parse Button may, should Fortune smile upon thee, bestow philological and computationally linguistic value and whimsy". End quote.</div>
+                    <div>I believe it was myself who said, and I quote, "Typeth thy Latin into yonder textbox, whereupon
+                        the sacred Parse Button may, should Fortune smile upon thee, bestow philological and
+                        computationally linguistic value and whimsy". End quote.
+                    </div>
                     <div>But I'm no expert in Latinology, so don't take my word for it.</div>
                     <div>Perchance.</div>
                     <div>If, perhaps, you need guidance, runneth thy finger upon
                         <button class="text-stone-500 cursor-pointer" onclick={appendLoremIpsum}>this</button>
-                        word and Lorem Ipsum shall perchance be appended upon thy text to grant thee an example.</div>
+                        word and Lorem Ipsum shall perchance be appended upon thy text to grant thee an example.
+                    </div>
                 </div>
-                <button class="text-lg text-stone-800 bg-stone-300 p-[0.75rem] m-[0.25rem] hover:m-[0rem] hover:bg-stone-400 transition-all hover:p-[1rem] cursor-pointer rounded-lg" onclick={() => helpOpen = false}>
+                <button class="text-lg text-stone-800 bg-stone-300 p-[0.75rem] m-[0.25rem] hover:m-[0rem] hover:bg-stone-400 transition-all hover:p-[1rem] cursor-pointer rounded-lg"
+                        onclick={() => helpOpen = false}>
                     I have been enlightened
                 </button>
             </div>

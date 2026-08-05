@@ -35,6 +35,7 @@ def testWord():
     #print("testWord called")
     #text = request.json["text"]
     #print("text:", text)
+    #TODO: refactor to just have it return a single word afsdhflksahflksahflkahklashfdlkjahfdas
 
     silly_secret: str = request.headers.get("Secret")
     print("silly_secret: ", silly_secret)
@@ -61,10 +62,39 @@ def testWord():
     #print("text: ", text)
     return analyzeText(text)
 
+@app.route("/ping", methods=["GET"])
 def ping():
     return jsonify({
         "result":"pong"
     })
+
+@app.route("/break-it-down")
+def breakItDown():
+    # break it down tony
+    # literally just copypasted code lmao im lazy tho
+    silly_secret: str = request.headers.get("Secret")
+    print("silly_secret: ", silly_secret)
+    if not silly_secret:
+        return jsonify({"error": "Unauthorized, No Secret"}), 401
+
+
+    verified = verify_secret(silly_secret)
+    if not verified:
+        return jsonify({"error": "Unauthorized"}), 401
+
+    if not request.is_json:
+            print("Request is not JSON!")
+            return jsonify({"error": "Request must be JSON"}), 400
+
+    data = request.get_json()
+
+    if "text" not in data:
+        print("No 'text' field in request!")
+        return jsonify({"error": "Missing 'text' field"}), 400
+
+    text = data["text"]
+    return analyzeText(text)
+
 
 def analyzeText(text):
     print("running AnalyzeText")
