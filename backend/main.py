@@ -1,3 +1,4 @@
+import re
 import spacy
 import sys
 import json
@@ -6,7 +7,6 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 import hmac
 from dotenv import load_dotenv
-
 
 nlp = spacy.load("la_core_web_lg")
 
@@ -20,6 +20,65 @@ nlp = spacy.load("la_core_web_lg")
 app = Flask(__name__)
 CORS(app)
 
+'''
+def load_gloss_dict(path="latin_interlinear.json"):
+    if not os.path.exists(path):
+        print(f"Warning!!!!!!!! {path} not found, definitions will be empty")
+        return {}
+
+    with open(path, "r", encoding="utf-8") as f:
+        return json.load(f)
+'''
+
+def load_full_dict(path="latin_gloss.json"):
+    if not os.path.exists(path):
+        return {}
+    with open(path, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+def parse_line(line):
+    if not line.strip():
+        return None
+
+    parts = line.strip().split()
+    if len(parts) < 2:
+        return None
+
+    lemma = parts[0]
+    in_flags = True
+    gloss_start = 0
+
+    for i, part in enumerate(parts[1:], 1):
+        if in_flags and len(part) > 2 and not part.isupper():
+            gloss_start = i
+            in_flags = False
+
+    clean_gloss = ""
+
+    if gloss_start > 0:
+        gloss = " ".join(parts[gloss_start:])
+        # Clean up: take first definition before semicolon
+        first_def = gloss.split(';')[0].strip()
+        # Remove parenthetical notes for inline gloss
+        clean_gloss = re.sub(r'\([^)]*\)', '', first_def).strip()
+    else:
+        clean_gloss = lemma
+
+    return {
+        "lemma": lemma,
+        "gloss": clean_gloss
+    }
+
+#GLOSS_DICT = load_gloss_dict()
+FULL_DICT = load_full_dict()
+
+GLOSS_DICT = {}
+
+with open("dict2/DICTLINE.GEN", 'r') as f:
+    for line in f:
+        result = parse_line(line)
+        if result:
+            GLOSS_DICT[result['lemma'].lower()] = result['gloss']
 
 def verify_secret(incoming_secret: str) -> bool:
     expected_secret = os.getenv("SILLYMAXXED_INTERNAL_SERVER_SECRET")
@@ -121,9 +180,47 @@ def analyzeText(text):
         "sentence": text
     })
 
+def get_gloss(lemma):
+    if lemma in GLOSS_DICT:
+        return GLOSS_DICT[lemma]
+
+    if lemma in FULL_DICT:
+        glosses = FULL_DICT[lemma]
+        if glosses:
+            return glosses[0].split(';')[0].strip()
+
+    return lemma
+
+'''
 def get_definition(lemma):
     #add dictionary lookup later astaghfirullah
-    return None
+    #return None
+    lemma_lower = lemma.lower()
+
+    if lemma_lower in FULL_DICT:
+        return FULL_DICT[lemma_lower]
+
+    if lemma_lower in GLOSS_DICT:
+        gloss = GLOSS_DICT[lemma_lower]
+        if isinstance(gloss, list):
+            return gloss
+        return [gloss]
+
+    return []
+'''
+
+
+def get_definition(lemma) -> list:
+    lemma_lower = lemma.lower()
+
+    definitions = [get_gloss(lemma)]
+    idkwhattonamethisvariable = []
+    if lemma_lower in FULL_DICT:
+        idkwhattonamethisvariable = FULL_DICT[lemma_lower]
+    if isinstance(idkwhattonamethisvariable, list):
+        definitions.append(idkwhattonamethisvariable)
+        return definitions
+    return definitions
 
 if __name__ == '__main__':
     app.run(debug=True, port=6767)
