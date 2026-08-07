@@ -4,3 +4,4 @@ flask_cors
 dotenv
 #deps/la_core_web_lg-3.9.6-py3-none-any.whl
 https://huggingface.co/latincy/la_core_web_lg/resolve/main/la_core_web_lg-3.9.6-py3-none-any.whl
+waitress
