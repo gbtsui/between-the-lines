@@ -1,6 +1,7 @@
 <script lang="ts">
     import type {WordData} from "$lib/types";
     import {formatMorphology} from "$lib/utils/morphology";
+    import {resolve} from "$app/paths";
 
     console.log("Vos saluto qui veriora quaesistis")
 
@@ -14,7 +15,7 @@
         dep: "ROOT",
         morph: "Case=Acc|Gender=Masc|Number=Sing",
         head: "0",
-        definition: null
+        definition: ["leather strap, thong"]
     })
 
     //let formattedMorphology = $derived(testWordData && formatMorphology({morph: testWordData?.morph, pos: testWordData?.pos}))
@@ -44,7 +45,7 @@
                 .then(res => res.json())
                 .then(data => {
                     if (data.type === "failure" || data.error) {
-                        console.error("error!",JSON.stringify(data));
+                        console.error("error!", JSON.stringify(data));
                         error = data.error || "request failed :("
                     } else {
                         console.log(JSON.stringify(data));
@@ -131,6 +132,13 @@
             </div>
         </div>
     </div>
+
+    <div class="mx-[5vw]  mt-[3rem] flex flex-col items-center justify-center">
+        <a href={resolve("/interlinear")} class="text-lg bg-stone-300 text-stone-800 p-[2rem] hover:p-[2.1rem] hover:bg-stone-200 transition-all">
+            open interlinear editor
+        </a>
+    </div>
+
     <div class="w-[90vw] mx-[5vw] h-[50rem] mt-[3rem] text-stone-200 flex flex-col items-center justify-center">
         <div class="w-[75vw] flex flex-row items-center justify-around">
             <div class="w-[30vw] text-lg">
@@ -177,9 +185,18 @@
                             <span class="text-stone-400 text-sm">syntactic dependency</span>
                             <span class="text-sky-300 text-sm font-mono">{testWordData?.dep ?? "Syntactic Dependency"}</span>
                         </div>
+                        <div class="flex flex-col gap-4">
+                            <span class="text-stone-400">definitions</span>
+                            <ul>
+                                {#each testWordData?.definition as def (def)}
+                                    <li class="text-stone-500 text-xs">{def}</li>
+                                {/each}
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
 </div>

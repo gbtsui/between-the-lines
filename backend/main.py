@@ -163,7 +163,7 @@ def ping():
         "result":"pong"
     })
 
-@app.route("/break-it-down")
+@app.route("/break-it-down", methods=["POST"])
 def breakItDown():
     # break it down tony
     # literally just copypasted code lmao im lazy tho
@@ -282,10 +282,12 @@ def get_definition(lemma) -> list:
     return definitions
 
 
+'''
 with open("dict2/DICTLINE.GEN", 'r') as f:
     for i, line in enumerate(f):
         if i < 20 and line.strip():
             print(f"LINE {i}: {line.strip()[:200]}")
+'''
 
 if __name__ == '__main__':
     app.run(debug=True, port=6767)
