@@ -7,6 +7,13 @@ It's kind of broken right now. The grammatical analysis is working perfectly fin
 I'm planning to actually run both dictionaries through a local LLM to sort everything into its lemmas, strict one/two word definitions and occasional expansions. 
 No hate to Lewis and Short or Mr. Whitaker, but Lewis and Short is encyclopaedic when I need glosses and Whitaker's formatting is too weird for me to be able to do in the 3 hours I spent on parsing.
 
+It does what it needs to do, though -- the "translation" part is really scuffed at the moment and you could probably get quicker (literal) results from Google Translate, 
+but my intended value is in the actual grammatical analysis tool given by the NLP. Useful for finding nuances and grammatical gooberies in texts quickly without having to 
+memorize declension and stuff.
+
+Gladius inter lineas est
+
+## framework
 polyglot (heh). 
 
 Backend:
