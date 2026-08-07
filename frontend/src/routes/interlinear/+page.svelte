@@ -60,6 +60,7 @@
             loading = false
         }).finally(() => {
             loading = false
+            mode = "reading"
         })
     }
 </script>
