@@ -6,5 +6,6 @@ export type WordData = {
     morph: string,
     head: string,
     dep: string,
-    definition: string | null,
+    //definition: string | null,
+    definition: string[]
 }
