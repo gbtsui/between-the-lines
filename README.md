@@ -14,3 +14,8 @@ Backend:
 Frontend:
 - SvelteKit
 - TailwindCSS
+
+AI disclosure:
+- Frontend components and TypeScript logic done by me, debugged via LLMs
+- Python backend... I tried really hard, wrote most of the early versions myself, eventually got super pressed for time and had to debug the JSON/GEN parsers really really quick
+- I do wish I could have used less, but it is what it is
