@@ -26,6 +26,22 @@ Frontend:
 - SvelteKit
 - TailwindCSS
 
+## build
+### backend
+1. Download requirements in backend/requirements.txt via `pip install -r requirements.txt`
+2. Run backend/main.py OR use backend.sh
+### frontend
+1. Install all packages in frontend/package.json
+2. Run `npm run build`
+
+## screenshots because kash is lowk my opp for ts
+![eins.png](images/eins.png)
+![zwei.png](images/zwei.png)
+![drei.png](images/drei.png)
+![vier.png](images/vier.png)
+
+## other
+
 AI disclosure:
 - Frontend components and TypeScript logic done by me, debugged via LLMs
 - Python backend... I tried really hard, wrote most of the early versions myself, eventually got super pressed for time and had to debug the JSON/GEN parsers really really quick
