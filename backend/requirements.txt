@@ -2,4 +2,3 @@ spacy
 flask
 flask_cors
 dotenv
-hmac
